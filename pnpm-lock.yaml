@@ -10,6 +10,7 @@ devDependencies:
   rollup-plugin-dts: 3.0.1_rollup@2.44.0+typescript@4.2.3
   rollup-plugin-esbuild: 3.0.2_esbuild@0.11.2+rollup@2.44.0
   ts-jest: 26.5.4_jest@26.6.3+typescript@4.2.3
+  tslib: 2.1.0
   typescript: 4.2.3
 lockfileVersion: 5.2
 packages:
@@ -4864,6 +4865,11 @@ packages:
     resolution:
       integrity: sha1-zy04vcNKE0vK8QkcQfZhni9nLQA=
       tarball: tslib/download/tslib-1.14.1.tgz
+  /tslib/2.1.0:
+    dev: true
+    resolution:
+      integrity: sha1-2mCGDxwuyqVwOrfTm8Bba/mIuXo=
+      tarball: tslib/download/tslib-2.1.0.tgz
   /tsutils/3.21.0_typescript@4.2.3:
     dependencies:
       tslib: 1.14.1
@@ -5247,4 +5253,5 @@ specifiers:
   rollup-plugin-dts: ^3.0.1
   rollup-plugin-esbuild: ^3.0.2
   ts-jest: ^26.5.4
+  tslib: ^2.1.0
   typescript: ^4.2.3

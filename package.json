@@ -3,7 +3,7 @@
     "version": "0.0.1",
     "description": "Iterator utility functions",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
+        "test": "jest",
         "build": "rollup -c"
     },
     "main": "dist/iterator-utils.js",
@@ -23,6 +23,7 @@
         "rollup-plugin-dts": "^3.0.1",
         "rollup-plugin-esbuild": "^3.0.2",
         "ts-jest": "^26.5.4",
+        "tslib": "^2.1.0",
         "typescript": "^4.2.3"
     }
 }

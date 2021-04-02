@@ -12,7 +12,7 @@
     "skipLibCheck": true,
     "noImplicitAny": false,
     "resolveJsonModule": true,
-    "types": ["node"],
+    "types": ["node", "jest"],
     "outDir": "dist",
     "rootDir": "./",
     "baseUrl": "./",
@@ -21,10 +21,9 @@
       "*": ["types/*.d.ts"]
     },
     "noErrorTruncation": true,
-    "lib": ["esnext", "dom", "dom.iterable", "scripthost", "es2019"],
-    "typeRoots": ["types"]
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost", "es2019"]
   },
   "outDir": "pkg",
-  "include": ["src/**/*.ts", "tests/**/*.ts"],
+  "include": ["src/**/*.ts", "test/**/*.ts"],
   "exclude": ["node_modules"]
 }
