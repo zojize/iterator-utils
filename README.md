@@ -7,8 +7,10 @@ A direct port of the well-known python builtin library `itertools` and some extr
 ## TODO
 
 - [ ] finish this README.md
-- [ ] write tests
-- [ ] port all functions from `itertools` as well as `more-itertools`
+- [ ] more tests
+- [x] port all functions from `itertools`
+- [ ] as well as `more-itertools`
 - [ ] write JSDocs
 - [ ] more iterator utilities I find useful
+- [ ] proper docs
 - [ ] (optional) implement Rust `std::iter::Iterator` somehow
