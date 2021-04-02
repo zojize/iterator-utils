@@ -4,7 +4,13 @@
  */
 
 import { ireduce } from './iterator-utils';
-import { PredicateFunction, CanIter, NumberPredicateFunction, UnpackIterable, Slice } from './types';
+import {
+    PredicateFunction,
+    CanIter,
+    NumberPredicateFunction,
+    UnpackIterable,
+    Slice,
+} from './types';
 import { identityPredicate, interpretRange, keyToCmp, numberIdentity } from './utils';
 
 export function iter(it: string): Generator<string>;
@@ -51,7 +57,7 @@ export function range(start: number, stop: number): Generator<number>;
 export function range(start: number, stop: number, step: number): Generator<number>;
 export function* range(...args: Slice): Generator<number> {
     let [n, end, step, inc] = interpretRange(args);
-    const comp = inc ? lessThanOrEqualTo : largerThanOrEqualTo;
+    const comp = inc ? largerThanOrEqualTo : lessThanOrEqualTo;
     while (true) {
         if (comp(n, end)) return;
         yield n;
