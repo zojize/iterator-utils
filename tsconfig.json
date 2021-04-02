@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "es2020",
+    "strict": true,
+    "jsx": "react",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "resolveJsonModule": true,
+    "types": ["node"],
+    "outDir": "dist",
+    "rootDir": "./",
+    "baseUrl": "./",
+    "paths": {
+      "/@/*": ["src/*"],
+      "*": ["types/*.d.ts"]
+    },
+    "noErrorTruncation": true,
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost", "es2019"],
+    "typeRoots": ["types"]
+  },
+  "outDir": "pkg",
+  "include": ["src/**/*.ts", "tests/**/*.ts"],
+  "exclude": ["node_modules"]
+}
