@@ -16,10 +16,6 @@
     "outDir": "dist",
     "rootDir": "./",
     "baseUrl": "./",
-    "paths": {
-      "/@/*": ["src/*"],
-      "*": ["types/*.d.ts"]
-    },
     "noErrorTruncation": true,
     "lib": ["esnext", "dom", "dom.iterable", "scripthost", "es2019"]
   },
