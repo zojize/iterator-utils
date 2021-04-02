@@ -1,5 +1,5 @@
 {
-    "name": "iterator-utils",
+    "name": "@jeffzo/iterator-utils",
     "version": "0.0.1",
     "description": "Iterator utility functions",
     "scripts": {
@@ -9,8 +9,19 @@
     "main": "dist/iterator-utils.js",
     "module": "dist/iterator-utils.mjs",
     "typings": "dist/iterator-utils.d.ts",
-    "author": "SIGUSR97",
+    "author": "jeffzo",
+    "repository": "https://github.com/SIGUSR97/iterator-utils",
     "license": "MIT",
+    "maintainers": [
+        {
+            "name": "jeffzo",
+            "email": "jeffzou2001@gmail.com"
+        },
+        {
+            "name": "sigkill",
+            "email": "jeffzo01@qq.com"
+        }
+    ],
     "devDependencies": {
         "@types/jest": "^26.0.22",
         "@types/node": "^14.14.37",
