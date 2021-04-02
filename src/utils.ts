@@ -1,11 +1,6 @@
-import { any } from './builtins';
-import {
-    CompFunc,
-    NumberPredicateFunction,
-    Optional,
-    PredicateFunction,
-    Slice,
-} from './types';
+import { CompFunc, NumberPredicateFunction, Optional, PredicateFunction, Slice } from './types';
+
+export const objectOrFunction = new Set(['object', 'function'] as const);
 
 export function identity<T>(x: T): T {
     return x;
@@ -23,6 +18,9 @@ export function numberIdentity<T>(x: T): number {
 export function add(a: number, b: number): number {
     return a + b;
 }
+
+export const list = Array.from;
+export const tuple: <T>(iterable: Iterable<T> | ArrayLike<T>) => ReadonlyArray<T> = Array.from;
 
 // https://github.com/nvie/itertools.js/blob/d92312ba11f358b77068fffddef38cf676a961d1/src/utils.js#L7
 export function keyToCmp<T>(keyFn: NumberPredicateFunction<T>): CompFunc<T> {
@@ -46,31 +44,31 @@ export function not<T>(func: PredicateFunction<T>): PredicateFunction<T> {
     return (x) => !func(x);
 }
 
-export function interpretRange(
-    r: Slice,
-): [start: number, stop: number, step: number, inc: boolean] {
-    let [start, end, step = 1] = r;
-    if (typeof end === 'undefined') [end, start] = [start, 0];
-    for (const n of [start, end, step])
+export function interpretRange(r: Slice): [start: number, stop: number, step: number] {
+    if (!r.length) throw TypeError('range expected at least 1 argument, got 0');
+    let [start, stop, step = 1] = r;
+    if (typeof stop === 'undefined') [stop, start] = [start, 0];
+    for (const n of [start, stop, step])
         if (!Number.isInteger(n)) throw new TypeError(`'${n}' cannot be interpreted as an integer`);
     if (step === 0) throw new TypeError('range() arg 3 must not be zero');
-    const inc = step > 0;
-    return [start, end, step, inc];
+    return [start, stop, step];
 }
 
 export function interpretSlice(slice: Slice): [start: number, stop: number, step: number] {
-    if (any(slice, (n) => !Number.isInteger(n) || n < 0))
-        throw TypeError('islice arguments must all be positive integer');
+    for (const n of slice)
+        if (!Number.isInteger(n) || n < 0)
+            throw TypeError('islice arguments must all be positive integer');
     switch (slice.length) {
+        // @ts-expect-error: check invalid input
+        case 0:
+            throw TypeError('slice expects 1-3 arguments, got 0');
         case 1:
             return [0, ...slice, 1];
         case 2:
             return [...slice, 1];
-        case 3:
+        default:
             if (slice[2] === 0) throw TypeError('step must not be zero');
             return slice;
-        default:
-            throw TypeError(`slice expects 1-3 arguments, got ${(slice as any).length}`);
     }
 }
 
@@ -94,9 +92,7 @@ export const kwargs = Kwargs;
 export function extractArgs<Args extends ReadonlyArray<unknown>, Kws extends Record<string, any>>(
     args: [...Args, $Kwargs<Kws>],
 ): [Args, Kws];
-export function extractArgs<T, Args extends ReadonlyArray<T>>(
-    args: [...Args],
-): [Args, void];
+export function extractArgs<T, Args extends ReadonlyArray<T>>(args: [...Args]): [Args, void];
 export function extractArgs<T, Args extends ReadonlyArray<T>, Kws, Kwargs_ extends $Kwargs<Kws>>(
     args: [...Args, Kwargs_],
 ): [Args, Kws];
@@ -104,10 +100,10 @@ export function extractArgs<T, Args extends ReadonlyArray<T>, Kw, Kwargs_ extend
     args: [...Args, Kwargs_?],
 ): [Args, Optional<Kw>] {
     if (!args.length) return [([] as unknown) as Args, (null as unknown) as Kw];
-    let kwarg: Optional<Kw>;
+    let kwarg = {} as Kw;
     const _args: T[] = [];
     for (const arg of args) {
-        if (arg instanceof $Kwargs) kwarg = arg[KWARGS];
+        if (arg instanceof $Kwargs) Object.assign(kwarg, arg[KWARGS]);
         else _args.push(arg as T);
     }
     return [(_args as unknown) as Args, kwarg];

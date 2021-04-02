@@ -1,3 +1,5 @@
+import { REVERSED } from './symbols';
+
 export type PushFront<TailT extends any[], FrontT> = ((
     ...args: [FrontT, ...TailT]
 ) => any) extends (...tuple: infer TupleT) => any
@@ -42,9 +44,11 @@ export type CompFunc<T> = (a: T, b: T) => number;
 export type AnyFunc = (...args: any[]) => any;
 
 export type Slice =
-    | [end: number]
-    | [start: number, end: number]
-    | [start: number, end: number, step: number];
+    | [stop: number]
+    | [start: number, stop: number]
+    | [start: number, stop: number, step: number];
 
 export type Optional<T> = T | void;
 export type VoidOr<T, V> = T extends void ? V : T;
+
+export type Reversible<T> = { [REVERSED](): Generator<T> };
