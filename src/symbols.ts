@@ -2,7 +2,8 @@
 export const COMP_FUNC = Symbol('compFunc');
 export const N = Symbol('n');
 export const SIGN = Symbol('sign');
-export const LEN = Symbol('LEN');
+export const LEN = Symbol('len');
+export const DONE = Symbol('done');
 
 // GroupBy symbols
 export const KEY_FUNC = Symbol('keyFunc');

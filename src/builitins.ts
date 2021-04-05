@@ -1,4 +1,4 @@
-import { COMP_FUNC, LEN, N, REVERSED, SIGN } from './symbols';
+import { COMP_FUNC, DONE, LEN, N, REVERSED, SIGN } from './symbols';
 import {
     AnyFunc,
     CanIter,
@@ -80,6 +80,7 @@ class RangeIterator {
     private [SIGN]: number;
     private [COMP_FUNC]: (a: number, b: number) => boolean;
     private [LEN]: number;
+    private [DONE] = false;
 
     constructor(public start, public stop, public step) {
         this[N] = this.start = start;
@@ -90,7 +91,8 @@ class RangeIterator {
     }
 
     public next(): IteratorResult<number> {
-        if (this[COMP_FUNC](this[N], this.stop)) {
+        if (this[DONE] || this[COMP_FUNC](this[N], this.stop)) {
+            this[DONE] = true;
             return {
                 value: undefined,
                 done: true,
@@ -100,15 +102,25 @@ class RangeIterator {
         return { value: ((this[N] += this.step), n) };
     }
 
-    public return(): IteratorResult<number> {
+    /**
+     * this function is implemented to match typescript's
+     *  definition for Generator
+     */
+    public return<T>(value: T): IteratorResult<T> {
+        this[DONE] = true;
         return {
-            value: undefined,
+            value,
             done: true,
         };
     }
 
-    public throw(): IteratorResult<number> {
-        throw undefined;
+    /**
+     * this function is implemented to match typescript's
+     *  definition for Generator
+     */
+    public throw(exception: any): IteratorResult<number> {
+        this[DONE] = true;
+        throw exception;
     }
 
     public [Symbol.iterator](): Generator<number> {
