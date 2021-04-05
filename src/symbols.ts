@@ -13,5 +13,9 @@ export const CURR_VAL = Symbol('currVal');
 export const ID = Symbol('id');
 export const GROUPER = Symbol('grouper');
 
+// kwargs
+export const KWARGS = Symbol('kwargs');
+
+
 // reversed 'magic method'
 export const REVERSED = Symbol('reversed')
