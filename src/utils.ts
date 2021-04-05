@@ -1,3 +1,4 @@
+import { KWARGS } from './symbols';
 import { CompFunc, NumberPredicateFunction, Optional, PredicateFunction, Slice } from './types';
 
 export const objectOrFunction = new Set(['object', 'function'] as const);
@@ -41,7 +42,7 @@ export function keyToCmp<T>(keyFn: NumberPredicateFunction<T>): CompFunc<T> {
 }
 
 export function not<T>(func: PredicateFunction<T>): PredicateFunction<T> {
-    return (x) => !func(x);
+    return (...args) => !func(...args);
 }
 
 export function interpretRange(r: Slice): [start: number, stop: number, step: number] {
@@ -72,7 +73,6 @@ export function interpretSlice(slice: Slice): [start: number, stop: number, step
     }
 }
 
-const KWARGS = Symbol('kwargs');
 export class $Kwargs<Kws extends Record<string, any> = Record<string, any>> {
     public [KWARGS]: Kws;
     // 'kwargs' is not intended to be read directly
@@ -96,15 +96,33 @@ export function extractArgs<T, Args extends ReadonlyArray<T>>(args: [...Args]): 
 export function extractArgs<T, Args extends ReadonlyArray<T>, Kws, Kwargs_ extends $Kwargs<Kws>>(
     args: [...Args, Kwargs_],
 ): [Args, Kws];
-export function extractArgs<T, Args extends ReadonlyArray<T>, Kw, Kwargs_ extends $Kwargs<Kw>>(
+export function extractArgs<T, Args extends ReadonlyArray<T>, Kws, Kwargs_ extends $Kwargs<Kws>>(
     args: [...Args, Kwargs_?],
-): [Args, Optional<Kw>] {
-    if (!args.length) return [([] as unknown) as Args, (null as unknown) as Kw];
-    let kwarg = {} as Kw;
+): [Args, Optional<Kws>] {
+    if (!args.length) return [([] as unknown) as Args, (null as unknown) as Kws];
+    let kwarg = {} as Kws;
     const _args: T[] = [];
     for (const arg of args) {
         if (arg instanceof $Kwargs) Object.assign(kwarg, arg[KWARGS]);
         else _args.push(arg as T);
     }
     return [(_args as unknown) as Args, kwarg];
+}
+
+export function extractKwargs<Kws>(kwargs?: $Kwargs<Kws> | Kws): Kws | undefined {
+    if (kwargs) if (kwargs instanceof $Kwargs) return kwargs[KWARGS];
+    return kwargs;
+}
+
+export function primitiveIdentity<T>(
+    x: T,
+): T extends number | string | boolean | bigint ? T : never {
+    switch (typeof x) {
+        case 'number':
+        case 'string':
+        case 'bigint':
+        case 'boolean':
+            return x as any;
+    }
+    throw TypeError(`${x} is not a primitive value`);
 }
