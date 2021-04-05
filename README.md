@@ -9,7 +9,7 @@ A direct port of the well-known python builtin library `itertools` and some extr
 - [ ] finish this README.md
 - [ ] more tests
 - [x] port all functions from `itertools`
-- [ ] as well as `more-itertools`
+- [ ] as well as `more-itertools` (90%)
 - [ ] write JSDocs
 - [ ] more iterator utilities I find useful
 - [ ] proper docs
