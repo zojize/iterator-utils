@@ -23,180 +23,23 @@ import {
     interpretSlice,
     not,
     Kwargs,
-    interpretRange,
     keyToCmp,
-    numberIdentity,
     identity,
     list,
     tuple,
     objectOrFunction,
 } from './utils';
-import {
-    COMP_FUNC,
-    N,
-    KEY_FUNC,
-    IT,
-    TGT_KEY,
-    CURR_KEY,
-    CURR_VAL,
-    ID,
-    GROUPER,
-    REVERSED,
-    SIGN,
-    LEN,
-} from './symbols';
-
-export function iter<T>(it: CanIter<T>): Generator<T> {
-    switch (typeof it) {
-        case 'string':
-            return it[Symbol.iterator]() as Generator<T>;
-        case 'function':
-        case 'object':
-            if (it === null) break;
-            if (Symbol.iterator in it && typeof it[Symbol.iterator] === 'function')
-                return it[Symbol.iterator]();
-            // assumes it's an Iterator if you pass in an object with
-            // a next method in it.
-            if ('next' in it && typeof it.next === 'function')
-                return { [Symbol.iterator]: () => it as Generator<T> } as Generator<T>;
-        default:
-            break;
-    }
-    throw new TypeError(`'${it}' is not iterable`);
-}
-
-export function all<T>(it: CanIter<T>, key: PredicateFunction<T> = identityPredicate): boolean {
-    for (const condition of iter(it)) if (!key(condition)) return false;
-    return true;
-}
-
-export function any<T>(it: CanIter<T>, key: PredicateFunction<T> = identityPredicate): boolean {
-    for (const condition of iter(it)) if (key(condition)) return true;
-    return false;
-}
+import { KEY_FUNC, IT, TGT_KEY, CURR_KEY, CURR_VAL, ID, GROUPER, REVERSED } from './symbols';
+import { any, iter, range, zip, enumerate, map, ifilter, imap } from './builitins';
 
 export function contains<T>(it: CanIter<T>, value: T): boolean {
     return any(it, (x) => x === value);
-}
-
-export function* enumerate<T>(it: CanIter<T>, start = 0): Generator<[index: number, value: T]> {
-    for (const v of iter(it)) yield [start++, v];
-}
-
-const largerThanOrEqualTo = (a: number, b: number) => a >= b;
-const lessThanOrEqualTo = (a: number, b: number) => a <= b;
-
-class Range {
-    private [COMP_FUNC]: (a: number, b: number) => boolean;
-    private [N]: number;
-    private [SIGN]: number;
-    private [LEN]: number;
-
-    constructor(public start: number, public stop: number, public step: number) {
-        this[N] = this.start = start;
-        this[SIGN] = Math.sign(step);
-        this[COMP_FUNC] = this[SIGN] > 0 ? largerThanOrEqualTo : lessThanOrEqualTo;
-        this.stop = stop;
-        this.step = step;
-    }
-
-    public next(): IteratorResult<number> {
-        if (this[COMP_FUNC](this[N], this.stop)) {
-            return {
-                value: undefined,
-                done: true,
-            };
-        }
-        const n = this[N];
-        return { value: ((this[N] += this.step), n) };
-    }
-
-    public return(): IteratorResult<number> {
-        return {
-            value: undefined,
-            done: true,
-        };
-    }
-
-    public throw(): IteratorResult<number> {
-        throw undefined;
-    }
-    public [Symbol.iterator](): Generator<number> {
-        return range(this.start, this.stop, this.step);
-    }
-
-    // https://github.com/dcrosta/xrange/blob/master/xrange.py
-    public [REVERSED](): Generator<number> {
-        const last = this.start + (this.len - 1) * this.step;
-        return range(last, this.start - this[SIGN], -1 * this.step);
-    }
-
-    private get len() {
-        return (
-            this[LEN] ??
-            (this[LEN] = Math.floor(
-                (this.stop - this.start) / this.step +
-                    +Boolean((this.stop - this.start) % this.step),
-            ))
-        );
-    }
-}
-
-export function range(stop: number): Generator<number>;
-export function range(start: number, stop: number): Generator<number>;
-export function range(start: number, stop: number, step: number): Generator<number>;
-export function range(...args: Slice): Generator<number> {
-    let [n, stop, step] = interpretRange(args);
-    return new Range(n, stop, step);
-}
-
-export function* zip<T extends ReadonlyArray<unknown>>(...its: T): Generator<UnpackIterable<T>> {
-    const iterators = its.map((it) => iter(it as CanIter<T>));
-    if (iterators.length) {
-        for (;;) {
-            const result: T[] = [];
-            for (const it of iterators) {
-                const next = it.next();
-                if (next.done) return;
-                result.push(next.value);
-            }
-            yield result as UnpackIterable<T>;
-        }
-    }
-}
-
-export function max<T>(it: CanIter<T>, key: NumberPredicateFunction<T> = numberIdentity): T {
-    return ireduce(it, (a, b) => (key(a) > key(b) ? a : b));
-}
-
-export function min<T>(it: CanIter<T>, key: NumberPredicateFunction<T> = numberIdentity): T {
-    return ireduce(it, (a, b) => (key(a) < key(b) ? a : b));
 }
 
 export function sorted<T>(it: CanIter<T>, key: NumberPredicateFunction<T>, reverse = false): T[] {
     return reverse
         ? list(iter(it)).sort(keyToCmp(key)).reverse()
         : list(iter(it)).sort(keyToCmp(key));
-}
-
-export function sum(it: CanIter<number>): number {
-    return ireduce(it, (a, b) => a + b);
-}
-
-export function* imap<T, R>(func: (x: T) => R, it: CanIter<T>): Generator<R> {
-    for (const item of iter(it)) yield func(item);
-}
-
-export function map<T, R>(func: (x: T) => R, it: CanIter<T>): R[] {
-    return [...imap(func, it)];
-}
-
-export function* ifilter<T>(pred: PredicateFunction<T>, it: CanIter<T>): Generator<T> {
-    for (const item of iter(it)) if (pred(item)) yield item;
-}
-
-export function filter<T>(pred: PredicateFunction<T> = identityPredicate, it: CanIter<T>): T[] {
-    return [...ifilter(pred, it)];
 }
 
 export function* count(start = 0, step = 1): Generator<number> {
@@ -362,8 +205,12 @@ export function* takewhile<T>(it: CanIter<T>, pred: PredicateFunction<T>): Gener
 
 /**
  * https://docs.python.org/3/library/itertools.html#itertools.tee
+ * TODO: can be optimized with a single FIFO deque?
  */
-export function tee<T, N extends number>(it: CanIter<T>, n: N = 2 as N): Tuple<Generator<T>, N> {
+export function tee<T, N extends number = 2>(
+    it: CanIter<T>,
+    n: N = 2 as N,
+): Tuple<Generator<T>, N> {
     const _it = iter(it);
     const deques = map(() => [] as T[], range(n));
     function* gen(mydeque: T[]): Generator<T> {
@@ -402,12 +249,13 @@ export function* zipLongest<
         for (;;) {
             const result: Args[] = [];
             for (const [i, it] of enumerate(iterators)) {
-                const next = it.next();
+                let next = it.next();
                 if (next.done) {
                     activeIts--;
                     if (!activeIts) return;
                     // TODO: remove the any here, im brain dead
                     iterators[i] = repeat(fillvalue as any);
+                    next = { value: fillvalue };
                 }
                 result.push(next.value);
             }
@@ -416,35 +264,7 @@ export function* zipLongest<
     }
 }
 
-export const zip_longest = zipLongest();
-
-export function consume<T, TReturn>(
-    it: CanIter<T, TReturn>,
-    n = Number.POSITIVE_INFINITY,
-): TReturn | void {
-    const _it = iter(it);
-    for (let i = 0; i < n; i++) {
-        const next = _it.next();
-        if (next.done) return next.value;
-    }
-}
-
-export function ireduce<T, R>(
-    it: CanIter<T>,
-    func: (a: R, b: T) => R = add as AnyFunc,
-    initial?: R,
-): R {
-    const _it = typeof initial === 'undefined' ? iter(it) : chain<T | R>([initial], iter(it));
-    let result: R | undefined;
-    for (const item of _it) {
-        if (!result) {
-            result = item as R;
-            continue;
-        }
-        result = func(result, item as T);
-    }
-    return result!;
-}
+export const zip_longest = zipLongest;
 
 export function* product<T, Kwargs_ extends Kwargs<{ repeat?: 1 }>>(
     ...args: [...CanIter<T>[], Kwargs_]
@@ -563,8 +383,3 @@ export function* combinationsWithReplacement<T, R extends number>(
 }
 
 export const combinations_with_replacement = combinationsWithReplacement;
-
-export function* take<T>(n: number, it: CanIter<T>): Generator<T> {
-    const _it = iter(it);
-    for (let i = 0; i < n; i++) yield _it.next().value;
-}
