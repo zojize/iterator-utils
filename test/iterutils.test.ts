@@ -16,8 +16,15 @@ import {
     reversed,
     combinations,
     combinationsWithReplacement,
+    chunked,
+    tail,
+    zipLongest,
+    kwargs,
+    Kwargs,
+    roundrobin,
+    uniqueEverseen,
 } from '../src';
-import { list, ltake, lzip } from './test-utils';
+import { list, lrange, ltake, lzip } from './test-utils';
 
 describe('iter', () => {
     it('iter("foo")', () => {
@@ -30,19 +37,19 @@ describe('iter', () => {
 
 describe('range', () => {
     it('range(3)', () => {
-        expect(list(range(3))).toEqual([0, 1, 2]);
+        expect(lrange(3)).toEqual([0, 1, 2]);
     });
     it('range(10, 0, -1)', () => {
-        expect(list(range(10, 0, -1))).toEqual([10, 9, 8, 7, 6, 5, 4, 3, 2, 1]);
+        expect(lrange(10, 0, -1)).toEqual([10, 9, 8, 7, 6, 5, 4, 3, 2, 1]);
     });
     it('range(0, 10, 2)', () => {
-        expect(list(range(0, 10, 2))).toEqual([0, 2, 4, 6, 8]);
+        expect(lrange(0, 10, 2)).toEqual([0, 2, 4, 6, 8]);
     });
     it('range(0)', () => {
-        expect(list(range(0))).toEqual([]);
+        expect(lrange(0)).toEqual([]);
     });
     it('range(-5, 5, 2)', () => {
-        expect(list(range(-5, 5, 2))).toEqual([-5, -3, -1, 1, 3]);
+        expect(lrange(-5, 5, 2)).toEqual([-5, -3, -1, 1, 3]);
     });
     it('range()', () => {
         // @ts-expect-error: should throw
@@ -172,7 +179,7 @@ describe('compress', () => {
         expect(list(compress('ABC', [0, 1, 1, 1, 1, 1]))).toEqual(list('BC'));
     });
     const n = 10000;
-    const data = chain.fromIterable(repeat(list(range(6)), n));
+    const data = chain.fromIterable(repeat(lrange(6), n));
     const selectors = chain.fromIterable(repeat([0, 1] as const));
     it('compress(data, selectors)', () => {
         expect(list(compress(data, selectors))).toEqual(
@@ -215,7 +222,10 @@ describe('count', () => {
         ]);
     });
     // console.log('comb', list(reversed(range(2))))
-    console.log('per', list(permutations(range(3))))
-    console.log('comb', list(combinations('ABCD', 2)))
-    console.log('comb with rep', list(combinationsWithReplacement('ABC', 2)))
+    console.log('per', list(permutations(range(3))));
+    console.log('comb', list(combinations('ABCD', 2)));
+    console.log('comb with rep', list(combinationsWithReplacement('ABC', 2)));
+    console.log('chunked', list(chunked(range(10), 2)));
+    console.log('chunked', list(chunked(lrange(11), 2, { strict: false })));
+    console.log('tail', list(tail(3, 'ABCDEFG')));
 });
