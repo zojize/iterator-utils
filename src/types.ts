@@ -33,7 +33,7 @@ export type OptionalTuple<A extends ReadonlyArray<unknown>, Val = void> = A exte
     ? [First | Val, ...OptionalTuple<Rest, Val>]
     : [];
 
-export type Last<A extends ReadonlyArray<unknown>> = A extends [...infer _, infer Last]
+export type Last<A extends ReadonlyArray<unknown>> = A extends [...any[], infer Last]
     ? Last
     : never;
 
@@ -52,3 +52,10 @@ export type Optional<T> = T | void;
 export type VoidOr<T, V> = T extends void ? V : T;
 
 export type Reversible<T> = { [REVERSED](): Generator<T> };
+
+// there is probably a better way to write this
+export type IsUnknown<T> = T | unknown extends T
+    ? Exclude<T extends '' ? true : false, false> extends never
+        ? true
+        : false
+    : false;
