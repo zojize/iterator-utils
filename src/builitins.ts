@@ -54,17 +54,17 @@ class Range {
         this.step = step;
     }
 
-    public [Symbol.iterator](): Generator<number> {
+    public [Symbol.iterator](): IterableIterator<number> {
         return new RangeIterator(this.start, this.stop, this.step);
     }
 
     // https://github.com/dcrosta/xrange/blob/master/xrange.py
-    public [REVERSED](): Generator<number> {
+    public [REVERSED](): IterableIterator<number> {
         const last = this.start + (this.len - 1) * this.step;
         return new RangeIterator(last, this.start - this[SIGN], -1 * this.step);
     }
 
-    private get len() {
+    protected get len() {
         return (
             this[LEN] ??
             (this[LEN] = Math.floor(
@@ -75,16 +75,13 @@ class Range {
     }
 }
 
-class RangeIterator {
+class RangeIterator extends Range {
     private [N]: number;
-    private [SIGN]: number;
     private [COMP_FUNC]: (a: number, b: number) => boolean;
-    private [LEN]: number;
     private [DONE] = false;
 
     constructor(public start, public stop, public step) {
-        this[N] = this.start = start;
-        this[SIGN] = Math.sign(step);
+        super(start, stop, step);
         this[COMP_FUNC] = this[SIGN] > 0 ? largerThanOrEqualTo : lessThanOrEqualTo;
         this.stop = stop;
         this.step = step;
@@ -102,44 +99,13 @@ class RangeIterator {
         return { value: ((this[N] += this.step), n) };
     }
 
-    /**
-     * this function is implemented to match typescript's
-     *  definition for Generator
-     */
-    public return<T>(value: T): IteratorResult<T> {
-        this[DONE] = true;
-        return {
-            value,
-            done: true,
-        };
-    }
-
-    /**
-     * this function is implemented to match typescript's
-     *  definition for Generator
-     */
-    public throw(exception: any): IteratorResult<number> {
-        this[DONE] = true;
-        throw exception;
-    }
-
-    public [Symbol.iterator](): Generator<number> {
+    public [Symbol.iterator](): IterableIterator<number> {
         return this;
     }
 
-    public [REVERSED](): Generator<number> {
+    public [REVERSED](): IterableIterator<number> {
         const last = this.start + (this.len - 1) * this.step;
         return new RangeIterator(last, this[N] + this.step, -1 * this.step);
-    }
-
-    private get len() {
-        return (
-            this[LEN] ??
-            (this[LEN] = Math.floor(
-                (this.stop - this.start) / this.step +
-                    +Boolean((this.stop - this.start) % this.step),
-            ))
-        );
     }
 }
 
