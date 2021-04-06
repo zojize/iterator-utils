@@ -9,7 +9,7 @@ import {
 } from './types';
 import { add, identityPredicate, interpretRange, numberIdentity } from './utils';
 
-export function iter<T>(it: CanIter<T>): IterableIterator<T> {
+export function iter<T>(it: CanIter<T> | string): IterableIterator<T> {
     switch (typeof it) {
         case 'string':
             return (it[Symbol.iterator]() as unknown) as IterableIterator<T>;

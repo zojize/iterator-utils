@@ -12,9 +12,6 @@ export type Tuple<ElementT, LengthT extends number, OutputT extends any[] = []> 
 }[OutputT['length'] extends LengthT ? 0 : 1];
 
 export type CanIter<T, TReturn = unknown, TNext = undefined> =
-    | string
-    | Array<T>
-    | ReadonlyArray<T>
     | Iterable<T>
     | Iterator<T, TReturn, TNext>
     | Generator<T, TReturn, TNext>;
