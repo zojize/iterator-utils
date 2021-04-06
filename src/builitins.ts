@@ -9,21 +9,21 @@ import {
 } from './types';
 import { add, identityPredicate, interpretRange, numberIdentity } from './utils';
 
-export function iter<T>(it: CanIter<T>): Generator<T> {
+export function iter<T>(it: CanIter<T>): IterableIterator<T> {
     switch (typeof it) {
         case 'string':
-            return it[Symbol.iterator]() as Generator<T>;
+            return (it[Symbol.iterator]() as unknown) as IterableIterator<T>;
         case 'function':
         case 'object':
             if (!it) break;
             if (Symbol.iterator in it && typeof it[Symbol.iterator] === 'function') {
-                if ('next' in it && typeof it.next === 'function') return it as Generator<T>;
+                if ('next' in it && typeof it.next === 'function') return it as IterableIterator<T>;
                 return it[Symbol.iterator]();
             }
             // assumes it's an Iterator if you pass in an object with
             // a next method in it.
             if ('next' in it && typeof it.next === 'function')
-                return { [Symbol.iterator]: () => it as Generator<T> } as Generator<T>;
+                return Object.assign({ [Symbol.iterator]: () => it as IterableIterator<T> }, it);
         default:
             break;
     }

@@ -108,7 +108,7 @@ export function filterfalse<T>(
 
 class GroupBy<T, R = T> {
     public [KEY_FUNC]: (x: T) => R;
-    public [IT]: Generator<T>;
+    public [IT]: IterableIterator<T>;
     public [TGT_KEY]: T | R;
     public [CURR_KEY]: T | R;
     public [CURR_VAL]: T;
