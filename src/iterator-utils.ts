@@ -17,20 +17,20 @@ import {
     VoidOr,
 } from './types';
 import {
+    Kwargs,
     add,
     extractArgs,
+    identity,
     identityPredicate,
     interpretSlice,
-    not,
-    Kwargs,
     keyToCmp,
-    identity,
     list,
-    tuple,
+    not,
     objectOrFunction,
+    tuple,
 } from './utils';
-import { KEY_FUNC, IT, TGT_KEY, CURR_KEY, CURR_VAL, ID, GROUPER, REVERSED } from './symbols';
-import { any, iter, range, zip, enumerate, map, ifilter, imap } from './builitins';
+import { CURR_KEY, CURR_VAL, GROUPER, ID, IT, KEY_FUNC, REVERSED, TGT_KEY } from './symbols';
+import { any, enumerate, ifilter, imap, iter, map, range, zip } from './builitins';
 
 export function contains<T>(it: CanIter<T>, value: T): boolean {
     return any(it, (x) => x === value);

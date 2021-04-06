@@ -3,6 +3,7 @@
  * https://github.com/python/cpython/blob/master/Lib/test/test_itertools.py
  */
 
+import { list, lrange, ltake, lzip } from './test-utils';
 import {
     accumulate,
     chain,
@@ -24,7 +25,6 @@ import {
     roundrobin,
     uniqueEverseen,
 } from '../src';
-import { list, lrange, ltake, lzip } from './test-utils';
 
 describe('iter', () => {
     it('iter("foo")', () => {
