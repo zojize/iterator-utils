@@ -48,5 +48,6 @@
         "iterator",
         "generator",
         "functional programming"
-    ]
+    ],
+    "version": "0.0.1"
 }
