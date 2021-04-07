@@ -16,3 +16,4 @@ Some functions are still untested, use with caution.
 - [ ] more iterator utilities I find useful
 - [ ] proper docs
 - [ ] (optional) implement Rust `std::iter::Iterator` somehow
+- [ ] github workflow (WIP)
