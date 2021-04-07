@@ -170,8 +170,8 @@ export function partition<T>(
     it: CanIter<T>,
     pred: PredicateFunction<T> = identityPredicate,
 ): [Generator<T>, Generator<T>] {
-    const [t1, t2] = tee(it);
-    return [filterfalse(pred, t1), ifilter(pred, t2)];
+    const [bad, good] = tee(it);
+    return [filterfalse(pred, bad), ifilter(pred, good)];
 }
 
 export function powerset<T>(it: CanIter<T>): Generator<T[]> {
@@ -216,3 +216,30 @@ export function firstTrue<T>(it: CanIter<T>, pred: PredicateFunction<T>): T {
 }
 
 export const first_true = firstTrue;
+
+export function* skip<T>(n: number, it: CanIter<T>): Generator<T> {
+    const _it = iter(it);
+    for (let i = 0; i < n; i++) _it.next();
+    for (;;) {
+        const next = _it.next();
+        if (next.done) return;
+        yield next.value;
+    }
+}
+
+export function intersperse<T, Fill>(value: Fill, it: CanIter<T>): Generator<T | Fill> {
+    return skip(1, flatten(zip(repeat(value), it)));
+}
+
+export function* once<T>(value: T): Generator<T> {
+    yield value;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export function* empty(): Generator<never> {}
+
+export function* successors<T>(first: T, succ: (x: T) => T): Generator<T> {
+    let x = first;
+    yield x;
+    for (;;) yield (x = succ(x));
+}
