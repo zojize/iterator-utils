@@ -7,7 +7,7 @@ import {
     Slice,
     UnpackIterable,
 } from './types';
-import { add, identityPredicate, interpretRange, numberIdentity } from './utils';
+import { add, identityPredicate, interpretRange, list, numberIdentity } from './utils';
 
 export function iter<T>(it: CanIter<T> | string): IterableIterator<T> {
     switch (typeof it) {
@@ -121,6 +121,7 @@ export function* enumerate<T>(it: CanIter<T>, start = 0): Generator<[index: numb
     for (const v of iter(it)) yield [start++, v];
 }
 
+// TODO: use a class instead of a simple generator function
 export function* zip<T extends ReadonlyArray<unknown>>(...its: T): Generator<UnpackIterable<T>> {
     const iterators = its.map((it) => iter(it as CanIter<T>));
     if (iterators.length) {
@@ -162,7 +163,7 @@ export function* imap<T, R>(func: (x: T) => R, it: CanIter<T>): Generator<R> {
 }
 
 export function map<T, R>(func: (x: T) => R, it: CanIter<T>): R[] {
-    return [...imap(func, it)];
+    return list(imap(func, it));
 }
 
 export function* ifilter<T>(pred: PredicateFunction<T>, it: CanIter<T>): Generator<T> {
@@ -170,7 +171,7 @@ export function* ifilter<T>(pred: PredicateFunction<T>, it: CanIter<T>): Generat
 }
 
 export function filter<T>(pred: PredicateFunction<T> = identityPredicate, it: CanIter<T>): T[] {
-    return [...ifilter(pred, it)];
+    return list(ifilter(pred, it));
 }
 
 export function max<T>(it: CanIter<T>, key: NumberPredicateFunction<T> = numberIdentity): T {
