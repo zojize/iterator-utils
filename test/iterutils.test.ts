@@ -24,6 +24,7 @@ import {
     Kwargs,
     roundrobin,
     uniqueEverseen,
+    adjacentNTuples,
 } from '../src';
 
 describe('iter', () => {
@@ -228,4 +229,6 @@ describe('count', () => {
     console.log('chunked', list(chunked(range(10), 2)));
     console.log('chunked', list(chunked(lrange(11), 2, { strict: false })));
     console.log('tail', list(tail(3, 'ABCDEFG')));
+    console.log('adj', list(adjacentNTuples(range(10), 3)));
+    console.log('range', Array.from(range(10)));
 });
