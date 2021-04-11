@@ -1,25 +1,24 @@
 {
-  "compilerOptions": {
-    "target": "esnext",
-    "module": "es2020",
-    "strict": true,
-    "jsx": "react",
-    "importHelpers": true,
-    "moduleResolution": "node",
-    "experimentalDecorators": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "skipLibCheck": true,
-    "noImplicitAny": false,
-    "resolveJsonModule": true,
-    "types": ["node", "jest"],
-    "outDir": "dist",
-    "rootDir": "./",
-    "baseUrl": "./",
-    "noErrorTruncation": true,
-    "lib": ["esnext", "dom", "dom.iterable", "scripthost", "es2019"]
-  },
-  "outDir": "pkg",
-  "include": ["src/**/*.ts", "test/**/*.ts"],
-  "exclude": ["node_modules"]
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "es2020",
+        "strict": true,
+        "importHelpers": true,
+        "moduleResolution": "node",
+        "experimentalDecorators": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "skipLibCheck": true,
+        "noImplicitAny": false,
+        "resolveJsonModule": true,
+        "types": ["node", "jest"],
+        "outDir": "dist",
+        "rootDir": "./",
+        "baseUrl": "./",
+        "noErrorTruncation": true,
+        "lib": ["esnext"]
+    },
+    "outDir": "pkg",
+    "include": ["src/**/*.ts", "test/**/*.ts"],
+    "exclude": ["node_modules"]
 }
