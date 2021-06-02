@@ -9,12 +9,13 @@ Some functions are still untested, use with caution.
 ## TODO
 
 - [ ] finish this README.md
+- [ ] rename/republish this repo
 - [ ] more tests
 - [x] port all functions from `itertools`
 - [ ] as well as `more-itertools` (90%)
-- [ ] write JSDocs
+- [ ] JSDocs
 - [ ] more iterator utilities I find useful
-- [ ] proper docs
-- [ ] (optional) implement Rust `std::iter::Iterator` somehow
+- [ ] implement Rust `std::iter::Iterator` somehow (90%, need tests)
+- [ ] split into submodules (iterator-utils, reversible, rs-iterator)
 - [ ] code comments
 - [ ] automated workflow with CI/CD (CircleCI or Travis CI?)
