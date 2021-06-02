@@ -1,8 +1,9 @@
 import { repeat } from './repeat';
 import { enumerate } from './enumerate';
 import { iter } from './iter';
+import { map } from './map';
 import { extractArgs, Kwargs } from '../internal/utils';
-import type { OptionalTuple, UnpackIterable } from '../internal/types';
+import type { OptionalTuple, Zipped } from '../internal/types';
 
 // TODO: better kwargs support
 export function zipLongest<
@@ -10,18 +11,19 @@ export function zipLongest<
     Kwargs_ extends Kwargs<{ fillvalue?: any }>,
 >(
     ...args: [...Args, Kwargs_?]
-): Generator<OptionalTuple<UnpackIterable<Args>, Kwargs_['kwargs']['fillvalue']>>;
+): Generator<OptionalTuple<Zipped<Args>, Kwargs_['kwargs']['fillvalue']>>;
 export function zipLongest<Args extends ReadonlyArray<Iterable<any>>>(
     ...args: [...Args]
-): Generator<OptionalTuple<UnpackIterable<Args>, null>>;
+): Generator<OptionalTuple<Zipped<Args>, null>>;
 export function* zipLongest<
     Args extends ReadonlyArray<Iterable<any>>,
     Kwargs_ extends Kwargs<{ fillvalue?: any }>,
 >(
     ...args: [...Args, Kwargs_?]
-): Generator<OptionalTuple<UnpackIterable<Args>, Kwargs_['kwargs']['fillvalue']>> {
+): Generator<OptionalTuple<Zipped<Args>, Kwargs_['kwargs']['fillvalue']>> {
     const [its, { fillvalue = null } = { fillvalue: null }] = extractArgs(args);
-    const iterators: Generator<any>[] = its.map(iter);
+    // better typing here?
+    const iterators = map<any, any>(iter, its);
     let activeIts = iterators.length;
 
     if (iterators.length) {
