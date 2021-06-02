@@ -1,5 +1,4 @@
-import { REVERSED } from './symbols';
-
+// https://github.com/microsoft/TypeScript/issues/26223#issuecomment-513116547
 export type PushFront<TailT extends any[], FrontT> = ((
     ...args: [FrontT, ...TailT]
 ) => any) extends (...tuple: infer TupleT) => any
@@ -14,6 +13,7 @@ export type Tuple<ElementT, LengthT extends number, OutputT extends any[] = []> 
 export type CanIter<T, TReturn = unknown, TNext = undefined> =
     | Iterable<T>
     | Iterator<T, TReturn, TNext>
+    | IterableIterator<T>
     | Generator<T, TReturn, TNext>;
 
 export type UnpackIterable<A extends ReadonlyArray<unknown>> = A extends [
@@ -36,6 +36,8 @@ export type Last<A extends ReadonlyArray<unknown>> = A extends [...any[], infer 
 
 export type AnyPredicateFunction<T> = (x: T) => any;
 export type PredicateFunction<T> = (x: T) => boolean;
+export type TypeGuard<T, S extends T> = (x: T) => x is S;
+export type NegativeTypeGuard<T, S extends T> = (x: T) => x is Exclude<T, S>;
 export type NumberPredicateFunction<T> = (x: T) => number;
 export type CompFunc<T> = (a: T, b: T) => number;
 export type AnyFunc = (...args: any[]) => any;
@@ -46,9 +48,8 @@ export type Slice =
     | [start: number, stop: number, step: number];
 
 export type Optional<T> = T | void;
+export type Maybe<T> = T | undefined;
 export type VoidOr<T, V> = T extends void ? V : T;
-
-export type Reversible<T> = { [REVERSED](): Generator<T> };
 
 // there is probably a better way to write this
 export type IsUnknown<T> = T | unknown extends T
@@ -56,3 +57,5 @@ export type IsUnknown<T> = T | unknown extends T
         ? true
         : false
     : false;
+
+export type Falsy = 0 | 0n | void | '';
