@@ -1,13 +1,15 @@
 {
-    "name": "@jeffzo/iterator-utils",
+    "name": "@jz/iterator-utils",
     "description": "Iterator utility functions",
     "scripts": {
         "test": "jest",
-        "build": "rollup -c"
+        "build": "rollup -c",
+        "lint": "prettier -w . && eslint --fix --ext .ts --ignore-pattern *.d.ts ."
     },
     "main": "dist/iterator-utils.js",
     "module": "dist/iterator-utils.mjs",
     "typings": "dist/iterator-utils.d.ts",
+    "sideEffects": true,
     "author": "jeffzo",
     "repository": {
         "type": "git",
@@ -26,17 +28,18 @@
         "esbuild": "^0.11.5",
         "eslint": "^7.23.0",
         "eslint-plugin-import": "^2.22.1",
-        "jest": "^26.6.3",
-        "rollup": "^2.44.0",
-        "rollup-plugin-dts": "^3.0.1",
-        "rollup-plugin-esbuild": "^3.0.2",
-        "ts-jest": "^26.5.4",
-        "tslib": "^2.2.0",
-        "typescript": "^4.2.3",
         "eslint-scope": "^5.1.1",
         "eslint-utils": "^2.1.0",
         "eslint-visitor-keys": "^2.0.0",
-        "mime-types": "^2.1.30"
+        "jest": "^27.0.3",
+        "mime-types": "^2.1.30",
+        "prettier": "^2.3.0",
+        "rollup": "^2.44.0",
+        "rollup-plugin-dts": "^3.0.1",
+        "rollup-plugin-esbuild": "^3.0.2",
+        "ts-jest": "^27.0.2",
+        "tslib": "^2.2.0",
+        "typescript": "^4.2.3"
     },
     "bugs": {
         "url": "https://github.com/SIGUSR97/iterator-utils/issues"
