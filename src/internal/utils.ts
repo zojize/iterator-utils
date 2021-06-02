@@ -1,13 +1,47 @@
-import { KWARGS } from './symbols';
-import { CompFunc, NumberPredicateFunction, Optional, PredicateFunction, Slice } from './types';
+import {
+    AnyFunc,
+    CompFunc,
+    Falsy,
+    NegativeTypeGuard,
+    NumberPredicateFunction,
+    Optional,
+    PredicateFunction,
+    Slice,
+    TypeGuard,
+} from './types';
 
-export const objectOrFunction = new Set(['object', 'function'] as const);
+const objectOrFunction = new Set(['object', 'function'] as const);
+
+export function isObjectOrFunction(objOrFunc: any): objOrFunc is Record<string, unknown> | AnyFunc {
+    return objectOrFunction.has(typeof objOrFunc as any);
+}
+
+export function isIterable<T>(obj: any): obj is Iterable<T> {
+    return (
+        isObjectOrFunction(obj) &&
+        Symbol.iterator in obj &&
+        typeof obj[Symbol.iterator] === 'function'
+    );
+}
+
+export function isIterator<T>(obj: any): obj is Iterator<T> {
+    return 'next' in obj && typeof obj.next === 'function';
+}
+
+export function isIterableIterator<T>(obj: any): obj is IterableIterator<T> {
+    return isIterable(obj) && isIterator(obj);
+}
 
 export function identity<T>(x: T): T {
     return x;
 }
 
 export const identityPredicate = Boolean;
+export const identityTypeGuard = Boolean as unknown as <T>(x: T) => x is Exclude<T, Falsy>;
+
+export function createTypeGuard<T, S extends T>(fn: PredicateFunction<T>): TypeGuard<T, S> {
+    return fn as TypeGuard<T, S>;
+}
 
 export function numberIdentity<T>(x: T): number {
     if (typeof x !== 'number') {
@@ -28,7 +62,6 @@ export function keyToCmp<T>(keyFn: NumberPredicateFunction<T>): CompFunc<T> {
     return (a: T, b: T) => {
         let ka = keyFn(a);
         let kb = keyFn(b);
-        // istanbul ignore else
         if (typeof ka === 'boolean' && typeof kb === 'boolean') {
             return ka === kb ? 0 : !ka && kb ? -1 : 1;
         } else if (typeof ka === 'number' && typeof kb === 'number') {
@@ -41,8 +74,12 @@ export function keyToCmp<T>(keyFn: NumberPredicateFunction<T>): CompFunc<T> {
     };
 }
 
-export function not<T>(func: PredicateFunction<T>): PredicateFunction<T> {
-    return (...args) => !func(...args);
+export function not<T, S extends T>(func: TypeGuard<T, S>): NegativeTypeGuard<T, S>;
+export function not<T>(func: PredicateFunction<T>): PredicateFunction<T>;
+export function not<T, S extends T>(
+    func: TypeGuard<T, S> | PredicateFunction<T>,
+): NegativeTypeGuard<T, S> | PredicateFunction<T> {
+    return (x: T): x is Exclude<T, S> => !func(x);
 }
 
 export function interpretRange(r: Slice): [start: number, stop: number, step: number] {
@@ -73,6 +110,8 @@ export function interpretSlice(slice: Slice): [start: number, stop: number, step
     }
 }
 
+export const KWARGS = Symbol('KWARGS');
+
 export class $Kwargs<Kws extends Record<string, any> = Record<string, any>> {
     public [KWARGS]: Kws;
     // 'kwargs' is not intended to be read directly
@@ -92,6 +131,9 @@ export const kwargs = Kwargs;
 export function extractArgs<Args extends ReadonlyArray<unknown>, Kws extends Record<string, any>>(
     args: [...Args, $Kwargs<Kws>],
 ): [Args, Kws];
+export function extractArgs<Args extends ReadonlyArray<unknown>, Kws extends Record<string, any>>(
+    args: [...Args, $Kwargs<Kws>?],
+): [Args, Kws | undefined];
 export function extractArgs<T, Args extends ReadonlyArray<T>>(args: [...Args]): [Args, void];
 export function extractArgs<T, Args extends ReadonlyArray<T>, Kws, Kwargs_ extends $Kwargs<Kws>>(
     args: [...Args, Kwargs_],
@@ -99,14 +141,14 @@ export function extractArgs<T, Args extends ReadonlyArray<T>, Kws, Kwargs_ exten
 export function extractArgs<T, Args extends ReadonlyArray<T>, Kws, Kwargs_ extends $Kwargs<Kws>>(
     args: [...Args, Kwargs_?],
 ): [Args, Optional<Kws>] {
-    if (!args.length) return [([] as unknown) as Args, (null as unknown) as Kws];
+    if (!args.length) return [[] as unknown as Args, null as unknown as Kws];
     let kwarg = {} as Kws;
     const _args: T[] = [];
     for (const arg of args) {
         if (arg instanceof $Kwargs) Object.assign(kwarg, arg[KWARGS]);
         else _args.push(arg as T);
     }
-    return [(_args as unknown) as Args, kwarg];
+    return [_args as unknown as Args, kwarg];
 }
 
 export function extractKwargs<Kws>(kwargs?: $Kwargs<Kws> | Kws): Kws | undefined {
@@ -125,4 +167,19 @@ export function primitiveIdentity<T>(
             return x as any;
     }
     throw TypeError(`${x} is not a primitive value`);
+}
+
+export function bind<T, N extends keyof T>(obj: T, methodName: N): T[N] {
+    return Object.getPrototypeOf(obj)[methodName].bind(obj);
+}
+
+export function pop<T>(ls: T[]): () => T | undefined {
+    return bind(ls, 'pop');
+}
+export function shift<T>(ls: T[]): () => T | undefined {
+    return bind(ls, 'shift');
+}
+
+export function sameValueZero(a: unknown, b: unknown): boolean {
+    return [a].includes(b);
 }

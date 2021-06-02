@@ -1,5 +1,5 @@
-export * from './builitins';
 export * from './iterator-utils';
-export * from './more-iterator-utils';
-export { Kwargs, kwargs, extractArgs } from './utils';
-export { REVERSED } from './symbols';
+export * from './reversible';
+export * from './internal/types';
+export * from './rs-iterator';
+export { Kwargs, kwargs, extractArgs } from './internal/utils';
