@@ -1,6 +1,6 @@
 {
-    "name": "@jz/iterator-utils",
-    "description": "Iterator utility functions",
+    "name": "it-utils",
+    "description": "Iterator utility library",
     "scripts": {
         "test": "jest",
         "build": "rollup -c",
