@@ -1,4 +1,4 @@
-# iterator-utils
+# it-utils
 
 ## Description
 
@@ -9,7 +9,7 @@ Some functions are still untested, use with caution.
 ## TODO
 
 - [ ] finish this README.md
-- [ ] rename/republish this repo
+- [x] rename/republish this repo
 - [ ] more tests
 - [x] port all functions from `itertools`
 - [ ] as well as `more-itertools` (90%)
@@ -17,5 +17,8 @@ Some functions are still untested, use with caution.
 - [ ] more iterator utilities I find useful
 - [ ] implement Rust `std::iter::Iterator` somehow (90%, need tests)
 - [ ] split into submodules (iterator-utils, reversible, rs-iterator)
+- [ ] better rollup settup?
 - [ ] code comments
 - [ ] automated workflow with CI/CD (CircleCI or Travis CI?)
+- [ ] rename files to fit new package name
+- [ ] rename this repo as well

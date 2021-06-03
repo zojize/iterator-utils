@@ -6,7 +6,7 @@ import type {
     NumberPredicateFunction,
     Falsy,
     AnyFunc,
-    UnpackIterable,
+    Zipped,
 } from '../internal/types';
 import { GeneratorImplementation } from '../internal/generator-implementation';
 import { identityTypeGuard, isIterable } from '../internal/utils';
@@ -426,7 +426,7 @@ export class RSIterator<T, TReturn = undefined, TNext = never>
     // TODO: ziplongest
     public zip<Its extends readonly Iterable<any>[]>(
         ...its: Its
-    ): RSIterator<UnpackIterable<[this, ...Its]>> {
+    ): RSIterator<Zipped<[this, ...Its]>> {
         return RSIterator.new(zip(this, ...its));
     }
 }

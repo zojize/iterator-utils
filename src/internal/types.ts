@@ -16,12 +16,13 @@ export type CanIter<T, TReturn = unknown, TNext = undefined> =
     | IterableIterator<T>
     | Generator<T, TReturn, TNext>;
 
-export type UnpackIterable<A extends ReadonlyArray<unknown>> = A extends [
-    infer First,
-    ...infer Rest
-]
-    ? [First extends CanIter<infer T> ? T : First, ...UnpackIterable<Rest>]
-    : [];
+type Shifted<Arr extends readonly unknown[]> = Arr extends [any, ...infer Shifted] ? Shifted : [];
+type Pushed<Arr extends any[], Item> = [...Arr, Item];
+
+export type Zipped<A extends readonly Iterable<unknown>[], Res extends unknown[] = []> = {
+    out: Res;
+    rec: A[0] extends Iterable<infer T> ? Zipped<Shifted<A>, Pushed<Res, T>> : never;
+}[A['length'] extends 0 ? 'out' : 'rec'];
 
 export type OptionalTuple<A extends ReadonlyArray<unknown>, Val = void> = A extends [
     infer First,

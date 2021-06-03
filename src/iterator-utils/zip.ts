@@ -1,9 +1,7 @@
 import { iter } from './iter';
-import type { UnpackIterable } from '../internal/types';
+import type { Zipped } from '../internal/types';
 
-export function* zip<T extends readonly Iterable<any>[]>(
-    ...its: T
-): Generator<UnpackIterable<T>> {
+export function* zip<T extends readonly Iterable<any>[]>(...its: T): Generator<Zipped<T>> {
     const iterators = its.map((it) => iter(it));
     if (iterators.length) {
         for (;;) {
@@ -13,7 +11,7 @@ export function* zip<T extends readonly Iterable<any>[]>(
                 if (next.done) return;
                 result.push(next.value);
             }
-            yield result as UnpackIterable<T>;
+            yield result as Zipped<T>;
         }
     }
 }

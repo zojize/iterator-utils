@@ -11,7 +11,7 @@ export function filterFalse<T, S extends T>(
     pred: TypeGuard<T, S> | PredicateFunction<T>,
     it: Iterable<T>,
 ): Generator<Exclude<T, T & S> | T> {
-    pred = identityTypeGuard as TypeGuard<T, S>;
+    pred ??= identityTypeGuard;
     return ifilter(not(pred), it);
 }
 

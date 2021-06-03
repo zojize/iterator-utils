@@ -240,9 +240,8 @@ describe('count', () => {
     console.log('per', list(permutations(range(3))));
     console.log('comb', list(combinations('ABCD', 2)));
     console.log('comb with rep', list(combinationsWithReplacement('ABC', 2)));
-    // TODO: fix failure on chunked
-    // console.log('chunked', list(chunked(range(10), 2)));
-    // console.log('chunked', list(chunked(lrange(11), 2, { strict: false })));
+    console.log('chunked', list(chunked(range(10), 2)));
+    console.log('chunked', list(chunked(lrange(11), 2, { strict: false })));
     console.log('tail', list(tail(3, 'ABCDEFG')));
     console.log('adj', list(adjacentNTuples(range(10), 3)));
     console.log('range', Array.from(range(10)));
