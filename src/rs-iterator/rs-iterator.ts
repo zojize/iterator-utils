@@ -52,6 +52,7 @@ import {
     skip,
     spreadMap,
     tail,
+    tap,
     tee,
     uniqueEverseen,
     zip,
@@ -186,8 +187,8 @@ export class RSIterator<T, TReturn = undefined, TNext = never>
     public combinationsWithReplacement<R extends number>(r: R): RSIterator<Tuple<T, R>> {
         return RSIterator.new(combinationsWithReplacement(this, r));
     }
-    public get combinations_with_replacement(): this['combinationsWithReplacement'] {
-        return this.combinationsWithReplacement;
+    public combinations_with_replacement<R extends number>(r: R): RSIterator<Tuple<T, R>> {
+        return RSIterator.new(combinationsWithReplacement(this, r));
     }
 
     public combinations<R extends number>(r: R): RSIterator<Tuple<T, R>> {
@@ -237,8 +238,12 @@ export class RSIterator<T, TReturn = undefined, TNext = never>
     ): Generator<Exclude<T, T & S> | T> {
         return RSIterator.new(filterFalse(pred, this));
     }
-    public get filter_false(): this['filterFalse'] {
-        return this.filterFalse;
+    public filter_false<S extends T>(pred: TypeGuard<T, S>): RSIterator<Exclude<T, T & S>>;
+    public filter_false(pred: PredicateFunction<T>): RSIterator<T>;
+    public filter_false<S extends T>(
+        pred: TypeGuard<T, S> | PredicateFunction<T>,
+    ): Generator<Exclude<T, T & S> | T> {
+        return RSIterator.new(filterFalse(pred, this));
     }
 
     public filter<S extends T>(pred: TypeGuard<T, S>): RSIterator<S>;
@@ -251,8 +256,9 @@ export class RSIterator<T, TReturn = undefined, TNext = never>
     public firstTrue(pred: PredicateFunction<T>): T {
         return firstTrue(this, pred);
     }
-    public get first_true(): this['firstTrue'] {
-        return this.firstTrue;
+    public first_true<S extends T>(pred: TypeGuard<T, S>): S;
+    public first_true(pred: PredicateFunction<T>): T {
+        return firstTrue(this, pred);
     }
 
     public get flatten(): this['chain']['fromIterable'] {
@@ -272,10 +278,8 @@ export class RSIterator<T, TReturn = undefined, TNext = never>
     public forEach(cb: (item?: T, return_?: this['return']) => TNext): TReturn | undefined {
         return iforEach(this, cb);
     }
-    public get for_each(): RSIterator<T>['forEach'] {
-        // TODO
-        // @ts-expect-error: fix typing here
-        return this.forEach;
+    public for_each(cb: (item?: T, return_?: this['return']) => TNext): TReturn | undefined {
+        return iforEach(this, cb);
     }
 
     public inspect(func: AnyFunc): RSIterator<T> {
@@ -317,8 +321,8 @@ export class RSIterator<T, TReturn = undefined, TNext = never>
     public padNull(): RSIterator<T | null> {
         return RSIterator.new(padNull(this));
     }
-    public get pad_null(): this['padNull'] {
-        return this.padNull;
+    public pad_null(): RSIterator<T | null> {
+        return RSIterator.new(padNull(this));
     }
 
     public pairwise(): RSIterator<[T, T]> {
@@ -392,8 +396,11 @@ export class RSIterator<T, TReturn = undefined, TNext = never>
     ): RSIterator<R> {
         return RSIterator.new(spreadMap(func, this));
     }
-    public get spread_map(): this['spreadMap'] {
-        return this.spreadMap;
+    public spread_map<R>(
+        this: RSIterator<T & unknown[]>,
+        func: (...args: T & unknown[]) => R,
+    ): RSIterator<R> {
+        return RSIterator.new(spreadMap(func, this));
     }
 
     public tail(n: number): RSIterator<T> {
@@ -404,8 +411,8 @@ export class RSIterator<T, TReturn = undefined, TNext = never>
         return RSIterator.new(itake(n, this));
     }
 
-    public get tap(): this['inspect'] {
-        return this.inspect;
+    public tap(func: AnyFunc): RSIterator<T> {
+        return RSIterator.new(tap(func, this));
     }
 
     public tee(): [RSIterator<T>, RSIterator<T>];
@@ -417,8 +424,8 @@ export class RSIterator<T, TReturn = undefined, TNext = never>
     public uniqueEverseen(key?: (x: T) => any): RSIterator<T> {
         return RSIterator.new(uniqueEverseen(this, key));
     }
-    public get unique_everseen(): this['uniqueEverseen'] {
-        return this.uniqueEverseen;
+    public unique_everseen(key?: (x: T) => any): RSIterator<T> {
+        return RSIterator.new(uniqueEverseen(this, key));
     }
 
     // TODO: uniqueJustseen
