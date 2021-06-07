@@ -8,13 +8,8 @@ import type { Tuple } from '../internal/types';
  * TODO: can be optimized with a single FIFO deque?
  */
 
-export function tee<T>(
-    it: Iterable<T>,
-): [Generator<T>, Generator<T>] ;
-export function tee<T, N extends number = 2>(
-    it: Iterable<T>,
-    n: N,
-): Tuple<Generator<T>, N> ;
+export function tee<T>(it: Iterable<T>): [Generator<T>, Generator<T>];
+export function tee<T, N extends number = 2>(it: Iterable<T>, n: N): Tuple<Generator<T>, N>;
 export function tee<T, N extends number = 2>(
     it: Iterable<T>,
     n?: N,

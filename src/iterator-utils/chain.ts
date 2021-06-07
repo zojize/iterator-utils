@@ -13,4 +13,3 @@ function* chain__fromIterable<T>(its: Iterable<Iterable<T>>): Generator<T> {
 
 chain.fromIterable = chain__fromIterable;
 chain.from_iterable = chain.fromIterable;
-
