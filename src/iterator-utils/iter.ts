@@ -1,7 +1,7 @@
 import { isIterable, sameValueZero } from '../internal/utils';
 import { GeneratorImplementation } from '../internal/generator-implementation';
 
-export class Iter<T, TReturn = void, TNext = never>
+export class Iter<T, TReturn = any, TNext = undefined>
     extends GeneratorImplementation<T, TReturn, TNext>
     implements Generator<T, TReturn, TNext>
 {
