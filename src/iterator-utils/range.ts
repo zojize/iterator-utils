@@ -19,9 +19,13 @@ class Range implements Iterable<number> {
     }
 
     // https://github.com/dcrosta/xrange/blob/cb2de1e7672f6534db5cd6148cb59d861702dc28/xrange.py#L79
+    // ! fixme
     public [Symbol.reversedIterator](): RangeIterator {
-        const last = this.start + (this.len - 1) * this.step;
-        return new RangeIterator(last, this.start - this.sign, -1 * this.step);
+        return new RangeIterator(
+            this.start + (this.len - 1) * this.step,
+            this.start - this.sign,
+            -this.step,
+        );
     }
 
     protected get len() {
