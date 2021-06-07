@@ -7,7 +7,6 @@ interface Iterable_<T, TReturn, TNext> {
 const isIterable_ = <T, TReturn, TNext>(it: any): it is Iterable_<T, TReturn, TNext> =>
     Symbol.iterator in it && typeof it[Symbol.iterator] === 'function';
 
-// TODO: name this function
 export function iforEach<T, TReturn, TNext>(
     it: Iterator<T, TReturn, TNext>,
     cb: (item?: T, return_?: typeof it.return) => TNext,
