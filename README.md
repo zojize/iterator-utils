@@ -2,17 +2,11 @@
 
 ## Installation
 
-using pnpm
-
-`pnpm i it-utils`
-
-using npm
-
-`npm i it-utils`
-
-using yarn
-
-`yarn add it-utils`
+```bash
+pnpm i it-utils    # using pnpm
+yarn add it-utils  # using yarn
+npm i it-utils     # using npm
+```
 
 ## Description
 
@@ -27,7 +21,8 @@ declare const numberArr: number[];
 declare const stringArr: string[];
 
 // zip
-for(const [n, str] of zip(numberArr)) {  }
+for (const [n, str] of zip(numberArr)) {
+}
 
 // RSIterator zip
 const zipped = numberArr.iter().zip(stringArr).collect();
@@ -35,18 +30,18 @@ const zipped = numberArr.iter().zip(stringArr).collect();
 
 ## TODO
 
-- [ ] finish this README
-- [x] rename/republish this repo
-- [ ] more tests
-- [x] port all functions from `itertools`
-- [ ] as well as `more-itertools` (90%)
-- [ ] JSDocs
-- [ ] more iterator utilities I find useful
-- [ ] implement Rust `std::iter::Iterator` somehow (90%, need tests)
-- [ ] split into submodules (iterator-utils, reversible, rs-iterator)
-- [ ] better rollup settup?
-- [ ] code comments
-- [ ] automated workflow with CI/CD (CircleCI or Travis CI?)
-- [ ] rename files to fit new package name
-- [ ] rename this repo as well
-- [ ] more examples
+-   [ ] finish this README
+-   [x] rename/republish this repo
+-   [ ] more tests
+-   [x] port all functions from `itertools`
+-   [ ] as well as `more-itertools` (90%)
+-   [ ] JSDocs
+-   [ ] more iterator utilities I find useful
+-   [ ] implement Rust `std::iter::Iterator` somehow (90%, need tests)
+-   [ ] split into submodules (iterator-utils, reversible, rs-iterator)
+-   [ ] better rollup settup?
+-   [ ] code comments
+-   [ ] automated workflow with CI/CD (CircleCI or Travis CI?)
+-   [ ] rename files to fit new package name
+-   [ ] rename this repo as well
+-   [ ] more examples
