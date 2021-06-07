@@ -59,4 +59,4 @@ export type IsUnknown<T> = T | unknown extends T
         : false
     : false;
 
-export type Falsy = 0 | 0n | void | '';
+export type Falsy = false | 0 | 0n | void | '';
