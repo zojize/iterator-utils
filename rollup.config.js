@@ -1,37 +1,59 @@
-// https://gist.github.com/aleclarson/9900ed2a9a3119d865286b218e14d226
 import dts from 'rollup-plugin-dts';
 import esbuild from 'rollup-plugin-esbuild';
+// import ts from 'rollup-plugin-ts';
+import rimraf from 'rimraf';
+// import { terser } from 'rollup-plugin-terser';
+import fg from 'fast-glob';
+import path from 'path';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const name = require('./package.json').main.replace(/\.js$/, '');
+const srcDir = './src';
+const outDir = './dist';
+const typesDirName = 'types';
+const formats = ['esm', 'cjs'];
 
-const bundle = (config) => ({
-    ...config,
-    input: 'src/index.ts',
-    external: (id) => !/^[./]/.test(id),
-});
+rimraf.sync(outDir);
 
-export default [
-    bundle({
+/**
+ * @param {string[]} entries
+ * @returns {import("rollup").RollupOptions[]}
+ */
+const createBundleFromEntries = (...entries) =>
+    entries
+        .map((entry) => entry.replace('src/', ''))
+        .map((entry) => [
+            {
+                input: path.join(srcDir, entry),
+                plugins: [esbuild({ minify: true })],
+                output: formats.map((format) => ({
+                    format,
+                    dir: path.join(outDir, format, path.parse(entry).dir),
+                })),
+            },
+            {
+                input: path.join(srcDir, entry),
+                plugins: [dts()],
+                output: { dir: path.join(outDir, typesDirName, path.parse(entry).dir) },
+            },
+        ])
+        .flat();
+
+const entryFilesPattern = 'src/**/*.ts';
+
+/**
+ * @type {import("rollup").RollupOptions[]}
+ */
+const config = [
+    {
+        input: 'src/index.ts',
         plugins: [esbuild({ minify: true })],
-        output: [
-            {
-                file: `${name}.js`,
-                format: 'cjs',
-                sourcemap: true,
-            },
-            {
-                file: `${name}.mjs`,
-                format: 'es',
-                sourcemap: true,
-            },
-        ],
-    }),
-    bundle({
-        plugins: [dts()],
         output: {
-            file: `${name}.d.ts`,
-            format: 'es',
+            format: 'umd',
+            name: 'itUtils',
+            file: path.join(outDir, 'umd/it-utils.js'),
+            sourcemap: true,
+            esModule: false,
         },
-    }),
-];
+    },
+].concat(createBundleFromEntries.apply(null, fg.sync(entryFilesPattern)));
+
+export default config;
