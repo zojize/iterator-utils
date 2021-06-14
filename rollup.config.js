@@ -1,8 +1,6 @@
 import dts from 'rollup-plugin-dts';
 import esbuild from 'rollup-plugin-esbuild';
-// import ts from 'rollup-plugin-ts';
 import rimraf from 'rimraf';
-// import { terser } from 'rollup-plugin-terser';
 import fg from 'fast-glob';
 import path from 'path';
 
