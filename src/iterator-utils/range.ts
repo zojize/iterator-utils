@@ -1,3 +1,4 @@
+import '../reversible/reversible';
 import type { Slice } from '../internal/types';
 import { interpretRange } from '../internal/utils';
 
@@ -68,14 +69,8 @@ class RangeIterator extends Range implements IterableIterator<number> {
         return { value: ((this._n += this.step), n) };
     }
 
-    public [Symbol.iterator](): this {
+    public override [Symbol.iterator](): this {
         return this;
-    }
-
-    // todo: test this
-    public [Symbol.reversedIterator](): RangeIterator {
-        const last = this.start + (this.len - 1) * this.step;
-        return new RangeIterator(last, this._n + this.step, -1 * this.step);
     }
 }
 
