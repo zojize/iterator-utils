@@ -9,7 +9,10 @@ const outDir = './dist';
 const typesDirName = 'types';
 const formats = ['esm', 'cjs'];
 
+console.log(`removing existing outDir: ${outDir}`);
+let start = +new Date();
 rimraf.sync(outDir);
+console.log(`done removing existing outDir, took ${(+new Date() - start).toFixed(2)} ms`);
 
 /**
  * @param {string[]} entries
