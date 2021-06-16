@@ -16,7 +16,7 @@
         "rootDir": "./",
         "baseUrl": "./",
         "noErrorTruncation": true,
-        "lib": ["esnext"]
+        "lib": ["esnext", "dom", "dom.iterable"]
     },
     "outDir": "pkg",
     "include": ["src/**/*.ts", "test/**/*.ts"],

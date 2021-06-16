@@ -43,6 +43,10 @@ export function createTypeGuard<T, S extends T>(fn: PredicateFunction<T>): TypeG
     return fn as TypeGuard<T, S>;
 }
 
+export function fakeGuard<T>(x: unknown): x is T {
+    return true;
+}
+
 export function numberIdentity<T>(x: T): number {
     if (typeof x !== 'number') {
         throw new Error('Inputs must be numbers');

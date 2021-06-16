@@ -3,12 +3,61 @@
     "description": "Iterator utility library",
     "scripts": {
         "test": "jest",
-        "build": "rollup -c",
+        "rollup": "node --max-old-space-size=8192 node_modules/rollup/dist/bin/rollup -c",
+        "build": "npm-run-all rollup",
         "lint": "prettier -w . && eslint --fix --ext .ts --ignore-pattern *.d.ts ."
     },
-    "main": "dist/iterator-utils.js",
-    "module": "dist/iterator-utils.mjs",
-    "typings": "dist/iterator-utils.d.ts",
+    "main": "dist/cjs/index.js",
+    "module": "dist/esm/index.js",
+    "types": "index.d.ts",
+    "typesVersions": {
+        ">=4.1": {
+            "*": [
+                "dist/types/*",
+                "dist/types/*/index.d.ts"
+            ]
+        }
+    },
+    "exports": {
+        ".": {
+            "node": "./dist/cjs/index.js",
+            "default": "./dist/esm/index.js"
+        },
+        "./iterator-utils": {
+            "node": "./dist/cjs/iterator-utils/index.js",
+            "default": "./dist/esm/iterator-utils/index.js"
+        },
+        "./iterator-utils/*": {
+            "node": "./dist/cjs/iterator-utils/*.js",
+            "default": "./dist/esm/iterator-utils/*.js"
+        },
+        "./rs-iterator": {
+            "node": "./dist/cjs/rs-iterator/index.js",
+            "default": "./dist/esm/rs-iterator/index.js"
+        },
+        "./rs-iterator/*": {
+            "node": "./dist/cjs/rs-iterator/*.js",
+            "default": "./dist/esm/rs-iterator/*.js"
+        },
+        "./reversible": {
+            "node": "./dist/cjs/reversible/index.js",
+            "default": "./dist/esm/reversible/index.js"
+        },
+        "./reversible/*": {
+            "node": "./dist/cjs/reversible/*.js",
+            "default": "./dist/esm/reversible/*.js"
+        },
+        "./internal/*": {
+            "node": "./dist/cjs/internal/*.js",
+            "default": "./dist/esm/internal/*.js"
+        },
+        "./package.json": "./package.json"
+    },
+    "files": [
+        "dist/cjs/*",
+        "dist/esm/*",
+        "dist/umd/*"
+    ],
     "sideEffects": true,
     "author": "jeffzo",
     "repository": {
@@ -31,15 +80,18 @@
         "eslint-scope": "^5.1.1",
         "eslint-utils": "^2.1.0",
         "eslint-visitor-keys": "^2.0.0",
+        "fast-glob": "^3.2.5",
         "jest": "^27.0.3",
         "mime-types": "^2.1.30",
+        "npm-run-all": "^4.1.5",
         "prettier": "^2.3.0",
+        "rimraf": "^3.0.2",
         "rollup": "^2.44.0",
         "rollup-plugin-dts": "^3.0.1",
         "rollup-plugin-esbuild": "^3.0.2",
         "ts-jest": "^27.0.2",
         "tslib": "^2.2.0",
-        "typescript": "^4.2.3"
+        "typescript": "^4.3.2"
     },
     "bugs": {
         "url": "https://github.com/SIGUSR97/iterator-utils/issues"

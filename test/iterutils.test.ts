@@ -236,7 +236,22 @@ describe('count', () => {
             ['b', -2],
         ]);
     });
-    // console.log('comb', list(reversed(range(2))))
+});
+
+describe('reversed', () => {
+    it('reversed range(5)', () => {
+        expect(list(reversed(range(5)))).toEqual(lrange(5).reverse());
+    });
+    it('reversed range(10)', () => {
+        expect(list(reversed(range(10)))).toEqual(lrange(10).reverse());
+    });
+    it('reversed range(0)', () => {
+        expect(list(reversed(range(0)))).toEqual(lrange(0).reverse());
+    });
+});
+
+{
+    console.log('rev range(2)', list(reversed(range(2))));
     console.log('per', list(permutations(range(3))));
     console.log('comb', list(combinations('ABCD', 2)));
     console.log('comb with rep', list(combinationsWithReplacement('ABC', 2)));
@@ -250,4 +265,4 @@ describe('count', () => {
     // const pop = <T>(ls: T[]) => bind(ls, 'pop');
     // console.log('list before', lsBefore, 'provide', list(provide(pop(ls))), 'list after', ls);
     it.todo('more tests');
-});
+}

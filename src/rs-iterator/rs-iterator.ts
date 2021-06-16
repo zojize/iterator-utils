@@ -58,11 +58,11 @@ import {
     zip,
 } from '../iterator-utils';
 
-export interface RSIterable<T, TReturn = undefined, TNext = never> {
+export interface RSIterable<T, TReturn = any, TNext = undefined> {
     iter(): RSIterator<T, TReturn, TNext>;
 }
 
-export class RSIterator<T, TReturn = undefined, TNext = never>
+export class RSIterator<T, TReturn = any, TNext = undefined>
     extends GeneratorImplementation<T, TReturn, TNext>
     implements RSIterable<T, TReturn, TNext>
 {
@@ -75,7 +75,7 @@ export class RSIterator<T, TReturn = undefined, TNext = never>
     }
 
     // why not? :)
-    static new<T, TReturn = void, TNext = never>(
+    static new<T, TReturn = any, TNext = undefined>(
         it: Iterable<T> | Generator<T, TReturn, TNext>,
     ): RSIterator<T, TReturn, TNext> {
         return new RSIterator(it);
@@ -89,29 +89,6 @@ export class RSIterator<T, TReturn = undefined, TNext = never>
     public collect<Res>(collector: (it: this) => Res): Res;
     public collect<Res>(collector?: (it: this) => Res): T[] | Res {
         return (collector ?? Array.from)(this);
-    }
-
-    public next(): IteratorResult<T> {
-        if (this.done) return { value: void 0, done: true };
-        const next = this.iterator.next();
-        this.done = Boolean(next.done);
-        return next;
-    }
-
-    public throw(e: unknown): IteratorResult<T> {
-        if ('throw' in this.iterator && typeof this.iterator.throw === 'function')
-            return this.iterator.throw(e);
-        throw e;
-    }
-
-    public return(value?: TReturn): IteratorResult<T, TReturn> {
-        if ('return' in this.iterator && typeof this.iterator.return === 'function')
-            return this.iterator.return(value);
-        return { value: void 0 as unknown as TReturn, done: true };
-    }
-
-    public [Symbol.iterator](): this {
-        return this;
     }
 
     // implementation details
@@ -261,8 +238,8 @@ export class RSIterator<T, TReturn = undefined, TNext = never>
         return firstTrue(this, pred);
     }
 
-    public get flatten(): this['chain']['fromIterable'] {
-        return this.chain.fromIterable;
+    public flatten<U>(its: Iterable<Iterable<U>>): RSIterator<T | U> {
+        return this.chain.fromIterable(its);
     }
 
     public groupby(): RSIterator<[T, Generator<T>]>;
@@ -374,7 +351,6 @@ export class RSIterator<T, TReturn = undefined, TNext = never>
     // TODO
     public repeat(n: number): RSIterator<T> {
         throw 'no implemented';
-        // return RSIterator.new();
     }
 
     public roundrobin(): RSIterator<T>;
@@ -439,11 +415,24 @@ export class RSIterator<T, TReturn = undefined, TNext = never>
 }
 
 export const RSIterable =
-    <T, TReturn = undefined, TNext = never>() =>
-    (base: {
-        prototype: (Iterable<T> | Generator<T, TReturn, TNext>) & Record<keyof any, any>;
-    }) => {
-        base.prototype.iter = function iter() {
-            return RSIterator.new(this);
-        };
+    <T, TReturn = any, TNext = undefined>() =>
+    ({ prototype }: PrototypeIterable<T, TReturn, TNext>) => {
+        addIterMethodToPrototype(prototype);
     };
+
+export function addIterMethodToPrototype<T, TReturn = any, TNext = undefined>(
+    proto: PrototypeIterable<T, TReturn, TNext>['prototype'],
+) {
+    Object.defineProperty(proto, 'iter', {
+        value: function iter() {
+            return RSIterator.new(this);
+        },
+        enumerable: false,
+        writable: true,
+        configurable: true,
+    });
+}
+
+export interface PrototypeIterable<T, TReturn = any, TNext = undefined> {
+    prototype: Iterable<T> | Generator<T, TReturn, TNext>;
+}
