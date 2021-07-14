@@ -26,10 +26,10 @@ import {
     cycle,
     dropwhile,
     enumerate,
-    filter,
     filterFalse,
     firstTrue,
     groupby,
+    ifilter,
     iforEach,
     imap,
     inspect,
@@ -225,8 +225,9 @@ export class RSIterator<T, TReturn = any, TNext = undefined>
 
     public filter<S extends T>(pred: TypeGuard<T, S>): RSIterator<S>;
     public filter(pred: PredicateFunction<T>): RSIterator<T>;
+    public filter(pred: (x: T) => unknown): RSIterator<T>;
     public filter<S extends T>(pred: TypeGuard<T, S> | PredicateFunction<T>): RSIterator<T | S> {
-        return RSIterator.new(filter(pred, this));
+        return RSIterator.new(ifilter(pred, this));
     }
 
     public firstTrue<S extends T>(pred: TypeGuard<T, S>): S;
@@ -252,10 +253,10 @@ export class RSIterator<T, TReturn = any, TNext = undefined>
     // grouper
     // chuncked
 
-    public forEach(cb: (item?: T, return_?: this['return']) => TNext): TReturn | undefined {
+    public forEach(cb: (item?: T, return_?: this['return']) => TNext | void): TReturn | undefined {
         return iforEach(this, cb);
     }
-    public for_each(cb: (item?: T, return_?: this['return']) => TNext): TReturn | undefined {
+    public for_each(cb: (item?: T, return_?: this['return']) => TNext | void): TReturn | undefined {
         return iforEach(this, cb);
     }
 
@@ -417,14 +418,14 @@ export class RSIterator<T, TReturn = any, TNext = undefined>
 export const RSIterable =
     <T, TReturn = any, TNext = undefined>() =>
     ({ prototype }: PrototypeIterable<T, TReturn, TNext>) => {
-        addIterMethodToPrototype(prototype);
+        addIterMethod(prototype);
     };
 
-export function addIterMethodToPrototype<T, TReturn = any, TNext = undefined>(
+export function addIterMethod<T, TReturn = any, TNext = undefined>(
     proto: PrototypeIterable<T, TReturn, TNext>['prototype'],
 ) {
     Object.defineProperty(proto, 'iter', {
-        value: function iter() {
+        value: function iter(this: Iterable<T>) {
             return RSIterator.new(this);
         },
         enumerable: false,
